@@ -5,33 +5,33 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/activity_fomulario_aluno_nome"
+        android:id="@+id/activity_form_student_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:hint="Nome"
+        android:hint="@string/name_placeholder"
         android:inputType="textCapWords"/>
 
     <EditText
-        android:id="@+id/activity_fomulario_aluno_telefone"
+        android:id="@+id/activity_form_student_phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:inputType="phone"
-        android:hint="Telefone" />
+        android:hint="@string/telefone_placeholder" />
 
     <EditText
-        android:id="@+id/activity_fomulario_aluno_email"
+        android:id="@+id/activity_form_student_mail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:hint="Email"
+        android:hint="@string/email_placeholder"
         android:inputType="textEmailAddress"/>
 
     <Button
-        android:id="@+id/activity_fomulario_aluno_botao_salvar"
+        android:id="@+id/activity_form_button_student_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="Salvar"/>
+        android:text="@string/botao_salvar_placeholder"/>
 </LinearLayout>
