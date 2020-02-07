@@ -2,6 +2,7 @@ package com.curso.agenda.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,12 +12,15 @@ import com.curso.agenda.DAO.StudentDAO;
 import com.curso.agenda.R;
 import com.curso.agenda.model.Student;
 
-public class FormularioAlunoActivity extends AppCompatActivity {
+import java.io.Serializable;
+
+public class FormStudentActivity extends AppCompatActivity {
 
     public static final String TITLE_NEW_STUDENT = "Cadastrar novo Aluno";
     private EditText nameField;
     private EditText phoneField;
     private EditText mailField;
+    private Student student;
 
     private final StudentDAO dao = new StudentDAO();
 
@@ -27,6 +31,16 @@ public class FormularioAlunoActivity extends AppCompatActivity {
         setTitle(TITLE_NEW_STUDENT);
         initializationOfFields();
         configureButtomSave();
+        Intent datas = getIntent();
+
+        student = (Student) datas.getSerializableExtra("student");
+        if (datas.hasExtra("student")) {
+            nameField.setText(student.getName());
+            phoneField.setText(student.getPhone());
+            mailField.setText(student.getMail());
+        } else {
+            student = new Student();
+        }
     }
 
     private void configureButtomSave() {
@@ -34,9 +48,13 @@ public class FormularioAlunoActivity extends AppCompatActivity {
         saveButtom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Student createdStudent = createStudent();
-
-                save(createdStudent);
+                performStudent();
+                if (student.hasValidId()){
+                    dao.edit(student);
+                } else {
+                    dao.save(student);
+                }
+                finish();
             }
         });
     }
@@ -47,16 +65,15 @@ public class FormularioAlunoActivity extends AppCompatActivity {
         mailField = findViewById(R.id.activity_form_student_mail);
     }
 
-    private void save(Student createdStudent) {
-        dao.save(createdStudent);
-        finish();
-    }
-
-    private Student createStudent() {
+    private void performStudent() {
         String name = nameField.getText().toString();
         String phone = phoneField.getText().toString();
         String mail = mailField.getText().toString();
 
-        return new Student(name, phone, mail);
+        student.setName(name);
+        student.setPhone(phone);
+        student.setMail(mail);
+
+        finish();
     }
 }
