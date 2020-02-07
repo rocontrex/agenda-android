@@ -1,22 +1,23 @@
 package com.curso.agenda.ui.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.curso.agenda.DAO.StudentDAO;
 import com.curso.agenda.R;
 import com.curso.agenda.model.Student;
 
-import java.io.Serializable;
+import static com.curso.agenda.ui.activity.ConstantsActivities.STUDENT_KEY;
 
 public class FormStudentActivity extends AppCompatActivity {
 
-    public static final String TITLE_NEW_STUDENT = "Cadastrar novo Aluno";
+    private static final String TITLE_NEW_STUDENT = "Cadastrar novo Aluno";
+    private static final String TITLE_EDIT_STUDENT = "Edita aluno";
     private EditText nameField;
     private EditText phoneField;
     private EditText mailField;
@@ -28,19 +29,27 @@ public class FormStudentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario_aluno);
-        setTitle(TITLE_NEW_STUDENT);
         initializationOfFields();
         configureButtomSave();
         Intent datas = getIntent();
+        loadStudent(datas);
+    }
 
-        student = (Student) datas.getSerializableExtra("student");
-        if (datas.hasExtra("student")) {
-            nameField.setText(student.getName());
-            phoneField.setText(student.getPhone());
-            mailField.setText(student.getMail());
+    private void loadStudent(Intent datas) {
+        student = (Student) datas.getSerializableExtra(STUDENT_KEY);
+        if (datas.hasExtra(STUDENT_KEY)) {
+            setTitle(TITLE_EDIT_STUDENT);
+            insertFields();
         } else {
+            setTitle(TITLE_NEW_STUDENT);
             student = new Student();
         }
+    }
+
+    private void insertFields() {
+        nameField.setText(student.getName());
+        phoneField.setText(student.getPhone());
+        mailField.setText(student.getMail());
     }
 
     private void configureButtomSave() {
@@ -48,15 +57,19 @@ public class FormStudentActivity extends AppCompatActivity {
         saveButtom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                performStudent();
-                if (student.hasValidId()){
-                    dao.edit(student);
-                } else {
-                    dao.save(student);
-                }
-                finish();
+                finishForm();
             }
         });
+    }
+
+    private void finishForm() {
+        performStudent();
+        if (student.hasValidId()) {
+            dao.edit(student);
+        } else {
+            dao.save(student);
+        }
+        finish();
     }
 
     private void initializationOfFields() {

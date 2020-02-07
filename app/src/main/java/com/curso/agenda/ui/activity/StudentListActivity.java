@@ -18,12 +18,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
+import static com.curso.agenda.ui.activity.ConstantsActivities.STUDENT_KEY;
+
 //O AppCompatActiviy é uma boa prática pois dá suporte a versões antigas do android
 public class StudentListActivity extends AppCompatActivity {
 
     public static final String TITLE_LIST_STUDENT = "Lista de Alunos";
-    public static final String STUDENT_KEY = "student";
     private final StudentDAO dao = new StudentDAO();
+    private ArrayAdapter<Student> adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,6 +33,11 @@ public class StudentListActivity extends AppCompatActivity {
         setTitle(TITLE_LIST_STUDENT);
         setContentView(R.layout.activity_lista_alunos);
         configureFABStudent();
+        configureList();
+        mockStudents();
+    }
+
+    private void mockStudents() {
         dao.save(new Student("Bruno", "92988233703", "rodrigoconte@gmail.com"));
         dao.save(new Student("Fernanda", "92988233703", "fenconte@gmail.com"));
         dao.save(new Student("Marcio", "92988233703", "mconte@gmail.com"));
@@ -53,14 +60,36 @@ public class StudentListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        configureList();
+        updateStudent();
+    }
+
+    private void updateStudent() {
+        adapter.clear();
+        adapter.addAll(dao.all());
     }
 
     private void configureList() {
         ListView studentList = findViewById(R.id.activity_student_list_listview);
-        final List<Student> students = dao.all();
-        adapterConfigure(studentList, students);
+        adapterConfigure(studentList);
         listenerItemClickConfigure(studentList);
+        configureLongClickListener(studentList);
+    }
+
+    private void configureLongClickListener(ListView studentList) {
+        studentList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i("logClick", String.valueOf(position));
+                Student student = (Student) parent.getItemAtPosition(position);
+                removeStudent(student);
+                return true;
+            }
+        });
+    }
+
+    private void removeStudent(Student student) {
+        dao.RemoveStudent(student);
+        adapter.remove(student);
     }
 
     private void listenerItemClickConfigure(ListView studentList) {
@@ -81,10 +110,10 @@ public class StudentListActivity extends AppCompatActivity {
         return goToFormActivity;
     }
 
-    private void adapterConfigure(ListView studentList, List<Student> students) {
-        studentList.setAdapter(new ArrayAdapter<>(
+    private void adapterConfigure(ListView studentList) {
+        adapter = new ArrayAdapter<>(
                 this,
-                android.R.layout.simple_list_item_1,
-                students));
+                android.R.layout.simple_list_item_1);
+        studentList.setAdapter(adapter);
     }
 }
