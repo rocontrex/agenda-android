@@ -2,10 +2,13 @@ package com.curso.agenda.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.curso.agenda.DAO.StudentDAO;
@@ -30,9 +33,23 @@ public class FormStudentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario_aluno);
         initializationOfFields();
-        configureButtomSave();
         Intent datas = getIntent();
         loadStudent(datas);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_form_student_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.activity_form_student_menu){
+            finishForm();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void loadStudent(Intent datas) {
@@ -50,16 +67,6 @@ public class FormStudentActivity extends AppCompatActivity {
         nameField.setText(student.getName());
         phoneField.setText(student.getPhone());
         mailField.setText(student.getMail());
-    }
-
-    private void configureButtomSave() {
-        Button saveButtom = findViewById(R.id.activity_form_button_student_save);
-        saveButtom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finishForm();
-            }
-        });
     }
 
     private void finishForm() {

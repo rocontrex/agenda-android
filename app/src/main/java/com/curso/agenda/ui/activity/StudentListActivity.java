@@ -3,11 +3,14 @@ package com.curso.agenda.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -38,9 +41,17 @@ public class StudentListActivity extends AppCompatActivity {
     }
 
     private void mockStudents() {
+
         dao.save(new Student("Bruno", "92988233703", "rodrigoconte@gmail.com"));
         dao.save(new Student("Fernanda", "92988233703", "fenconte@gmail.com"));
         dao.save(new Student("Marcio", "92988233703", "mconte@gmail.com"));
+
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.activity_student_list, menu);
     }
 
     private void configureFABStudent() {
@@ -72,19 +83,20 @@ public class StudentListActivity extends AppCompatActivity {
         ListView studentList = findViewById(R.id.activity_student_list_listview);
         adapterConfigure(studentList);
         listenerItemClickConfigure(studentList);
-        configureLongClickListener(studentList);
+        registerForContextMenu(studentList);
     }
 
-    private void configureLongClickListener(ListView studentList) {
-        studentList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("logClick", String.valueOf(position));
-                Student student = (Student) parent.getItemAtPosition(position);
-                removeStudent(student);
-                return true;
-            }
-        });
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.activity_student_list_menu_delete) ;
+        {
+            AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            Student choicedStudent = adapter.getItem(menuInfo.position);
+            removeStudent(choicedStudent);
+        }
+        return super.onContextItemSelected(item);
     }
 
     private void removeStudent(Student student) {
