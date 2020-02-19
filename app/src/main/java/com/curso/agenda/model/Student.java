@@ -48,7 +48,7 @@ public class Student implements Serializable {
     @Nullable
     @Override
     public String toString() {
-        return name;
+        return name + "-" + phone;
     }
 
     public void setId(int id) {

@@ -7,7 +7,6 @@ import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -17,9 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.curso.agenda.DAO.StudentDAO;
 import com.curso.agenda.R;
 import com.curso.agenda.model.Student;
+import com.curso.agenda.ui.adapter.StudentListAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
 
 import static com.curso.agenda.ui.activity.ConstantsActivities.STUDENT_KEY;
 
@@ -28,7 +26,7 @@ public class StudentListActivity extends AppCompatActivity {
 
     public static final String TITLE_LIST_STUDENT = "Lista de Alunos";
     private final StudentDAO dao = new StudentDAO();
-    private ArrayAdapter<Student> adapter;
+    private StudentListAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,8 +73,7 @@ public class StudentListActivity extends AppCompatActivity {
     }
 
     private void updateStudent() {
-        adapter.clear();
-        adapter.addAll(dao.all());
+        adapter.update(dao.all());
     }
 
     private void configureList() {
@@ -87,7 +84,7 @@ public class StudentListActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
+    public boolean onContextItemSelected(@NonNull MenuItem item ) {
         int itemId = item.getItemId();
 
         if (itemId == R.id.activity_student_list_menu_delete) ;
@@ -123,9 +120,9 @@ public class StudentListActivity extends AppCompatActivity {
     }
 
     private void adapterConfigure(ListView studentList) {
-        adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1);
+
+        adapter = new StudentListAdapter(this);
+
         studentList.setAdapter(adapter);
     }
 }
